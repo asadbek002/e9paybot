@@ -7,7 +7,6 @@ from telegram.ext import (
     ContextTypes, filters
 )
 import pandas as pd
-import pytesseract
 import re
 import os
 import asyncio
