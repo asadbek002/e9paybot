@@ -6,7 +6,6 @@ from telegram.ext import (
     ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler,
     ContextTypes, filters
 )
-from PIL import Image
 import pandas as pd
 import pytesseract
 import re
