@@ -14,7 +14,6 @@ from datetime import datetime
 import shutil
 
 # Настройки
-pytesseract.pytesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 BOT_TOKEN = "7365174406:AAGBwSuWFIUDSXoFCbw1r5gpmdrBU7txXis"
 GROUP_ID = -4535050669
 ADMIN_ID = 5897615611
