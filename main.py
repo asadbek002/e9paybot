@@ -94,6 +94,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message.chat.type in ["group", "supergroup"]:
+        return
     user_id = update.message.from_user.id
     text = update.message.text.strip()
     session = user_sessions.get(user_id)
@@ -127,6 +129,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # 1. Игнорировать сообщения, если они из группы
+    if update.message.chat.type in ["group", "supergroup"]:
+        return
+
     user_id = update.message.from_user.id
     photo = update.message.photo[-1]
     session = user_sessions.get(user_id)
@@ -136,14 +142,25 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(TEXTS["start"][lang])
         return
 
+    # 2. Принято фото — начинаем обработку
     await update.message.reply_text({
         "uz": "⏳ Rasm qabul qilinmoqda...",
         "ru": "⏳ Фото обрабатывается...",
         "en": "⏳ Processing your image..."
     }[lang])
 
+    # 3. Через 5 секунд — предупреждение о медленном интернете
+    await asyncio.sleep(5)
+    await update.message.reply_text({
+        "uz": "⚠️ Internetingiz sekin bo‘lishi mumkin. Kuting yoki qayta yuboring.",
+        "ru": "⚠️ Возможно, у вас медленный интернет. Подождите или отправьте заново.",
+        "en": "⚠️ Your internet might be slow. Please wait or resend the photo."
+    }[lang])
+
+    # 4. Дополнительная пауза (эмуляция обработки)
     await asyncio.sleep(2)
 
+    # 5. Сохраняем фото в сессию
     if "passport_photo" not in session:
         session["passport_photo"] = photo.file_id
         await update.message.reply_text(TEXTS["ask_id_card"][lang],
